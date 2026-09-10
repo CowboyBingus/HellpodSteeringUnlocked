@@ -4,7 +4,7 @@
 
 Steer your hellpod toward rooftops, rocks and high ground without the game's base avoidance system pushing it away.
 
-Import **HellpodSteeringUnlocked.zip** into **HDArsenal** and enable it with the game closed. Disable or remove it through Arsenal. Remove any older manual installation before switching to the manager.
+[Download Hellpod Steering Unlocked](https://github.com/CowboyBingus/HellpodSteeringUnlocked/releases/download/data-v4.1/HellpodSteeringUnlocked.zip), import the ZIP into **HDArsenal**, and enable it with the game closed. Disable or remove it through Arsenal. Remove any older manual installation before switching to the manager.
 
 The mod relaxes the base avoidance system. It does not guarantee unrestricted steering or a usable landing spot everywhere, and related hellpod placement checks also see the changed setting.
 
