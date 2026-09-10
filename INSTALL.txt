@@ -1,0 +1,9 @@
+Hellpod Steering Unlocked
+
+Steer your hellpod toward rooftops, rocks and high ground without being pushed away.
+
+Install: Import HellpodSteeringUnlocked.zip into HDArsenal and enable it with the game closed.
+Remove any previous manual installation before switching to Arsenal.
+Disable or remove it through Arsenal, then restart the game.
+
+Developed with assistance from GPT-6 Astra.
