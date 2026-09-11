@@ -2,7 +2,10 @@
 
 # Hellpod Steering Unlocked
 
-[Download data-v7](https://github.com/CowboyBingus/HellpodSteeringUnlocked/releases/tag/data-v7) · [Required Bingus Shared Loader](https://github.com/CowboyBingus/BingusSharedLoader/releases/tag/loader-v2)
+> [!IMPORTANT]
+> **Bingus Shared Loader is now a separate required download.** [Download the latest loader](https://github.com/CowboyBingus/BingusSharedLoader/releases/latest), import `BingusSharedLoader.zip` into Arsenal or HD2MM, and enable it alongside Hellpod Steering Unlocked before deploying. **This mod will not activate without the loader.** Mod managers do not install it automatically.
+
+[Download data-v7](https://github.com/CowboyBingus/HellpodSteeringUnlocked/releases/tag/data-v7)
 
 Steer your hellpod toward rooftops, rocks and high ground without the game's base avoidance system pushing it away.
 
@@ -10,7 +13,7 @@ Steer your hellpod toward rooftops, rocks and high ground without the game's bas
 
 This prerelease is **data-v7**, for Steam build **24826606** / EXE **1.8.45317.0**. It contains only this gameplay module. Bingus Shared Loader owns the startup code, so later loader updates require replacing just the loader package. Other gameplay mods are optional.
 
-Remove older packages with bundled loaders before deploying this candidate. This package requires Bingus Shared Loader loader-v2 / API 1. The loader was formerly named Shared Mod Loader; its manager GUID and API are unchanged. In-game validation of the packaging transition remains pending.
+Remove older packages with bundled loaders before deploying this candidate. This package requires Bingus Shared Loader loader-v2 or newer / API 1. The loader was formerly named Shared Mod Loader; its manager GUID and API are unchanged. In-game validation of the packaging transition remains pending.
 
 The mod relaxes the base avoidance system. It does not guarantee unrestricted steering or a usable landing spot everywhere; related hellpod placement checks also see the changed setting.
 
