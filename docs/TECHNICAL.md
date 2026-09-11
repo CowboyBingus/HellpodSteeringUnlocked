@@ -12,7 +12,7 @@ Only the base avoidance flag changes. Native instructions and the separate city-
 
 ## Startup and lifecycle
 
-`scripts/wwise.py` embeds the original Wwise callback bytecode unchanged ahead of `src/shared_loader.lua`. The archive contains this shared resource (`7251fdd9bb62480a`) and one uniquely named mod module, both Lua type `a14e8dfa2cd117e2`. The module contains the Windows adapter, gameplay patch and lifecycle loader. It replaces no `boot` resource. The coordinator checks availability before requiring either mod, and both packages carry identical coordinator bytes. See [startup compatibility](COMPATIBILITY.md).
+`scripts/module.py` compiles one named Lua resource containing this mod's Windows adapter, gameplay patch and lifecycle code. It contains no Wwise or boot override. The separately installed Bingus Shared Loader owns Wwise initialization, preserving the original callbacks before requiring installed gameplay modules. See [startup compatibility](COMPATIBILITY.md).
 
 `src/archive_loader.lua` verifies both supported game-module hashes and installs one update wrapper. It preserves the earlier update function and all return values, including nil values. Because mission initialization resets the flag, it checks at 100 ms intervals and reapplies the one-byte edit when needed. It logs state transitions and stops its own checks on validation failure. It installs no shutdown callback.
 
@@ -20,10 +20,10 @@ The status file is `%LOCALAPPDATA%/HellpodSteeringUnlocked.log`. `waiting_for_mi
 
 ## Tests and compatibility
 
-The offline suite uses synthetic local allocations to check the exact one-byte edit, mission resets, pointer/layout failures, rejected memory permissions and callback behavior. It executes the compiled wrapper to compare every original audio callback against the unmodified bytecode. ZIP checks verify resource identity, hashes, artwork, Arsenal metadata and relocation.
+The offline suite uses synthetic local allocations to check the exact one-byte edit, mission resets, pointer/layout failures, rejected memory permissions and callback behavior. The separate loader project compares original audio callbacks against the unmodified bytecode. ZIP checks verify resource identity, hashes, artwork, Arsenal metadata and relocation.
 
 With `HD2_BOUNCE_SOURCE` set, the suite also exercises Better Stratagem Bounce's actual loader and both mods' Windows adapters in fresh LuaJIT processes for each initialization order. The explicit pointer handling preserves compatibility with shared FFI declarations. A standalone build needs no other mod's source.
 
-The shared coordinator loaded both modules in a native startup-only check. The inspected HUD+ boot retains its update chain in offline execution. An unrelated Wwise override still needs coordination, and manager support does not imply automatic code merging.
+The separate-loader packaging migration is verified offline; in-game testing remains pending. The inspected HUD+ boot retains its update chain in offline execution. An unrelated Wwise override still needs coordination, and manager support does not imply automatic code merging.
 
-Game compatibility is restricted to the module hashes in `scripts/archive.py`, Steam build **24826606** / EXE **1.8.45317.0**. The original callback hash is in `scripts/wwise.py`; all manager layout guards are in `src/steering_patch.lua`. Revalidate those together for a new game build. Offline tests cannot establish every steering, multiplayer, mission-transition or landing outcome.
+Game compatibility is restricted to the module hashes in `scripts/archive.py`, Steam build **24826606** / EXE **1.8.45317.0**. The original callback hash belongs to the separate loader; all manager layout guards are in `src/steering_patch.lua`. Revalidate those together for a new game build. Offline tests cannot establish every steering, multiplayer, mission-transition or landing outcome.

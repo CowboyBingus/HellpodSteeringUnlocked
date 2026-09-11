@@ -4,15 +4,16 @@ import os
 from pathlib import Path
 import subprocess
 import sys
+sys.dont_write_bytecode = True
 
 from archive import LUA, sha, EXE_SHA, GAME_DLL_SHA, GAME, ARCHIVE, make_archive, resource_hash
 from package import package_release
-from wwise import build_resources, verify_peer, CALLBACK_SHA, CALLBACK_NAME
+from module import build_module
 
 ROOT = Path(__file__).resolve().parents[1]
 SOURCE = ROOT / 'src'
 TESTS = ROOT / 'tests'
-REVISION = 'data-v5'
+REVISION = 'data-v7'
 BUILD = ROOT / 'build'
 INSPECTOR = Path(os.environ.get('HD2_PATCH_INSPECT', ROOT / 'tools/bin/hd2-patch-inspect.exe'))
 
@@ -28,7 +29,7 @@ def main():
     for relative, expected in [('bin/helldivers2.exe', EXE_SHA), ('data/game/game.dll', GAME_DLL_SHA)]:
         if sha((GAME / relative).read_bytes()) != expected:
             raise ValueError('Unsupported game build: ' + relative)
-    resources = build_resources(ROOT, BUILD, 'mods/cowboybingus/hellpod_steering_unlocked',
+    resources = build_module(ROOT, BUILD, 'mods/cowboybingus/hellpod_steering_unlocked',
                                 'steering_patch.lua', REVISION)
     env = dict(os.environ, LUA_PATH=str(LUA.parent / '?.lua') + ';;')
     peer = os.environ.get('HD2_BOUNCE_SOURCE')
@@ -37,10 +38,8 @@ def main():
     if peer_source is not None:
         if not (peer_source / 'windows_api.lua').is_file():
             raise ValueError('HD2_BOUNCE_SOURCE must point to the Bounce source repository')
-        verify_peer(ROOT, peer_source)
         arguments.append(peer_source)
     tests = run(arguments, env=env)
-    tests += run([LUA, TESTS / 'test_shared_loader.lua', SOURCE, BUILD], env=env)
     if peer_source is not None:
         for order in ('hellpod-first', 'bounce-first'):
             tests += run([LUA, TESTS / 'test_api_coexistence.lua', SOURCE, peer_source, order], env=env)
@@ -53,11 +52,11 @@ def main():
     run([INSPECTOR, '--patch', data / ARCHIVE,
          '--out', BUILD / 'archive-inspection.json', '--extract-dir', BUILD / 'archive-resources'])
     inspection = json.loads((BUILD / 'archive-inspection.json').read_text())
-    expected = {CALLBACK_NAME, resource_hash('mods/cowboybingus/hellpod_steering_unlocked')}
+    expected = {resource_hash('mods/cowboybingus/hellpod_steering_unlocked')}
     actual = {int(item['name']['hex'], 16) for item in inspection['resources']}
-    if inspection['num_files'] != 2 or actual != expected or any(
+    if inspection['num_files'] != 1 or actual != expected or any(
             item['type']['hex'] != '0xa14e8dfa2cd117e2' for item in inspection['resources']):
-        raise ValueError('Archive must contain only the coordinator and this mod')
+        raise ValueError('Archive must contain only this mod module')
     files = {f'data/{ARCHIVE}{suffix}': f'build/data/{ARCHIVE}{suffix}'
              for suffix in ('', '.stream', '.gpu_resources')}
     report = {
@@ -66,16 +65,14 @@ def main():
         'description': 'Steer your hellpod toward rooftops, rocks and high ground without being pushed away.',
         'game_exe_sha256': EXE_SHA, 'game_dll_sha256': GAME_DLL_SHA,
         'deployment_files': files, 'files': {path: sha((ROOT / path).read_bytes()) for path in files.values()},
-        'vanilla_callback_sha256': CALLBACK_SHA, 'vanilla_callbacks_embedded_unchanged': True,
-        'lua_resource': 'core/wwise/lua/wwise_flow_callbacks', 'lua_resource_hash': hex(CALLBACK_NAME),
         'data_change': {'manager_pointer_rva': '0x27706A8', 'owner_pointer_rva': '0x277FF58',
                         'owner_offset': '0x7C5220', 'offset': 0, 'before': '01', 'after': '00',
                         'mission_reset_check_seconds': 0.1, 'city_flag_changed': False},
         'continuous_update_hook': True, 'shutdown_hook': False, 'executable_code_writes': 0,
         'offline_tests': tests.strip().splitlines(), 'windows_adapter_interop': peer_source is not None,
     }
-    report['shared_loader'] = {'version': 1, 'resource_sha256': sha(resources[CALLBACK_NAME]),
-                               'module': 'mods/cowboybingus/hellpod_steering_unlocked', 'boot_replaced': False}
+    report['requires'] = [{'name': 'Bingus Shared Loader', 'guid': '612eaf70-d682-43c7-9efd-16dcc695f977', 'api': 1}]
+    report['description'] += ' Requires Bingus Shared Loader.'
     sources = list(SOURCE.glob('*.lua')) + list(TESTS.glob('*.lua')) + list((ROOT / 'scripts').glob('*.py'))
     report['source_sha256'] = {path.relative_to(ROOT).as_posix(): sha(path.read_bytes()) for path in sources}
     release = package_release(ROOT, BUILD, report)
