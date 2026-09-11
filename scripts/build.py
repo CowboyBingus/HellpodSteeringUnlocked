@@ -2,22 +2,19 @@
 import json
 import os
 from pathlib import Path
-import struct
 import subprocess
 import sys
 
-from archive import BOOT, BOOT_SHA, LUA, sha, EXE_SHA, GAME_DLL_SHA, GAME, ARCHIVE, make_archive
+from archive import LUA, sha, EXE_SHA, GAME_DLL_SHA, GAME, ARCHIVE, make_archive, resource_hash
 from package import package_release
+from wwise import build_resources, verify_peer, CALLBACK_SHA, CALLBACK_NAME
 
 ROOT = Path(__file__).resolve().parents[1]
 SOURCE = ROOT / 'src'
 TESTS = ROOT / 'tests'
-REVISION = 'data-v4.1'
+REVISION = 'data-v5'
 BUILD = ROOT / 'build'
-CALLBACK = Path(os.environ.get('HD2_CALLBACK_RESOURCE', ROOT / 'artifacts/vanilla/wwise_flow_callbacks.lua.main'))
 INSPECTOR = Path(os.environ.get('HD2_PATCH_INSPECT', ROOT / 'tools/bin/hd2-patch-inspect.exe'))
-CALLBACK_SHA = '05BBF52978028758B39F5B91A30A695D20069CEABD774D88755F0582A296BEC9'
-CALLBACK_NAME = 0x7251FDD9BB62480A
 
 
 def run(args, **kwargs):
@@ -27,63 +24,40 @@ def run(args, **kwargs):
     return result.stdout
 
 
-def literal(data):
-    return '"' + ''.join(f'\\{byte:03d}' for byte in data) + '"'
-
-
 def main():
     for relative, expected in [('bin/helldivers2.exe', EXE_SHA), ('data/game/game.dll', GAME_DLL_SHA)]:
         if sha((GAME / relative).read_bytes()) != expected:
             raise ValueError('Unsupported game build: ' + relative)
-    boot, vanilla = BOOT.read_bytes(), CALLBACK.read_bytes()
-    if sha(boot) != BOOT_SHA or struct.unpack('<II', boot[:8]) != (326, 2):
-        raise ValueError('Vanilla boot resource changed')
-    if sha(vanilla) != CALLBACK_SHA or struct.unpack('<II', vanilla[:8]) != (10263, 2):
-        raise ValueError('Vanilla audio callback resource changed')
-    BUILD.mkdir(parents=True, exist_ok=True)
-    (BUILD / 'vanilla-boot.ljbc').write_bytes(boot[8:])
-    (BUILD / 'vanilla-callbacks.ljbc').write_bytes(vanilla[8:])
-    wrapper = f"assert(loadstring({literal(vanilla[8:])}, '@vanilla_wwise_callbacks'))()\n"
-    for variable, name in [('create_api', 'windows_api.lua'), ('patch', 'steering_patch.lua'),
-                           ('install_loader', 'archive_loader.lua')]:
-        code = (SOURCE / name).read_text()
-        for forbidden in ('VirtualProtect', 'FlushInstructionCache', 'CreateRemoteThread', 'LoadLibrary'):
-            if forbidden in code:
-                raise ValueError(f'Forbidden code-modification API in {name}: {forbidden}')
-        wrapper += f'local {variable} = (function()\n' + code + '\nend)()\n'
-    wrapper += "install_loader(create_api, patch, {revision = '" + REVISION + "', "
-    wrapper += f"exe_sha256 = '{EXE_SHA}', game_sha256 = '{GAME_DLL_SHA}'" + '})\n'
-    (BUILD / 'callbacks.wrapper.lua').write_text(wrapper)
+    resources = build_resources(ROOT, BUILD, 'mods/cowboybingus/hellpod_steering_unlocked',
+                                'steering_patch.lua', REVISION)
     env = dict(os.environ, LUA_PATH=str(LUA.parent / '?.lua') + ';;')
-    run([LUA, '-bsdW', BUILD / 'callbacks.wrapper.lua', BUILD / 'callbacks.ljbc'], env=env)
-    bytecode = (BUILD / 'callbacks.ljbc').read_bytes()
-    if bytecode[:5] != vanilla[8:13]:
-        raise ValueError('LuaJIT bytecode mode differs')
     peer = os.environ.get('HD2_BOUNCE_SOURCE')
     peer_source = Path(peer).resolve() / 'src' if peer else None
     arguments = [LUA, TESTS / 'test_data.lua', SOURCE, BUILD, sha(LUA.read_bytes())]
     if peer_source is not None:
         if not (peer_source / 'windows_api.lua').is_file():
             raise ValueError('HD2_BOUNCE_SOURCE must point to the Bounce source repository')
+        verify_peer(ROOT, peer_source)
         arguments.append(peer_source)
     tests = run(arguments, env=env)
+    tests += run([LUA, TESTS / 'test_shared_loader.lua', SOURCE, BUILD], env=env)
     if peer_source is not None:
         for order in ('hellpod-first', 'bounce-first'):
             tests += run([LUA, TESTS / 'test_api_coexistence.lua', SOURCE, peer_source, order], env=env)
     (BUILD / 'offline-tests.txt').write_text(tests)
     data = BUILD / 'data'
     data.mkdir(exist_ok=True)
-    (data / ARCHIVE).write_bytes(make_archive(struct.pack('<II', len(bytecode), 2) + bytecode, CALLBACK_NAME))
+    (data / ARCHIVE).write_bytes(make_archive(resources))
     for suffix in ('.stream', '.gpu_resources'):
         (data / (ARCHIVE + suffix)).write_bytes(b'')
     run([INSPECTOR, '--patch', data / ARCHIVE,
          '--out', BUILD / 'archive-inspection.json', '--extract-dir', BUILD / 'archive-resources'])
     inspection = json.loads((BUILD / 'archive-inspection.json').read_text())
-    resources = inspection['resources']
-    if (inspection['num_files'] != 1 or len(resources) != 1 or
-            resources[0]['name']['hex'] != '0x7251fdd9bb62480a' or
-            resources[0]['type']['hex'] != '0xa14e8dfa2cd117e2'):
-        raise ValueError('Only the separate Wwise callback resource may be overridden')
+    expected = {CALLBACK_NAME, resource_hash('mods/cowboybingus/hellpod_steering_unlocked')}
+    actual = {int(item['name']['hex'], 16) for item in inspection['resources']}
+    if inspection['num_files'] != 2 or actual != expected or any(
+            item['type']['hex'] != '0xa14e8dfa2cd117e2' for item in inspection['resources']):
+        raise ValueError('Archive must contain only the coordinator and this mod')
     files = {f'data/{ARCHIVE}{suffix}': f'build/data/{ARCHIVE}{suffix}'
              for suffix in ('', '.stream', '.gpu_resources')}
     report = {
@@ -100,6 +74,8 @@ def main():
         'continuous_update_hook': True, 'shutdown_hook': False, 'executable_code_writes': 0,
         'offline_tests': tests.strip().splitlines(), 'windows_adapter_interop': peer_source is not None,
     }
+    report['shared_loader'] = {'version': 1, 'resource_sha256': sha(resources[CALLBACK_NAME]),
+                               'module': 'mods/cowboybingus/hellpod_steering_unlocked', 'boot_replaced': False}
     sources = list(SOURCE.glob('*.lua')) + list(TESTS.glob('*.lua')) + list((ROOT / 'scripts').glob('*.py'))
     report['source_sha256'] = {path.relative_to(ROOT).as_posix(): sha(path.read_bytes()) for path in sources}
     release = package_release(ROOT, BUILD, report)

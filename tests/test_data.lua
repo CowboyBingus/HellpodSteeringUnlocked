@@ -150,50 +150,11 @@ local results = {env.update(0.1)}
 assert(results[1] == 1 and results[2] == nil and results[3] == 3 and select('#', env.update(0.1)) == 3)
 pass('standalone update forwards return values unchanged')
 
-for _, audio_enabled in ipairs({false, true}) do
-  for _, ffi_available in ipairs({false, true}) do
-    local function environment()
-        local env = setmetatable({stingray = {Application = {build = function() return 'release' end}},
-            print = function() end, os = {getenv = function() end}}, {__index = _G})
-        env._G = env
-        if audio_enabled then env.stingray.Wwise = {} end
-        env.require = function(name)
-            if name == 'ffi' then
-                if not ffi_available then error('ffi fixture unavailable') end
-                return ffi
-            end
-            assert(name == 'core/wwise/lua/wwise_visualization' or name == 'core/wwise/lua/wwise_bank_reference')
-            return {}
-        end
-        env.loadstring = function(bytes, name)
-            local func, message = loadstring(bytes, name)
-            if func then setfenv(func, env) end
-            return func, message
-        end
-        return env
-    end
-    local vanilla, wrapped = environment(), environment()
-    setfenv(assert(loadfile(build .. '/vanilla-callbacks.ljbc')), vanilla)()
-    setfenv(assert(loadfile(build .. '/vanilla-boot.ljbc')), wrapped)()
-    local previous_update, previous_shutdown = wrapped.update, wrapped.shutdown
-    local module_require = wrapped.require
-    wrapped.require = function(name)
-        if name == 'core/wwise/lua/wwise_flow_callbacks' then
-            setfenv(assert(loadfile(build .. '/callbacks.ljbc')), wrapped)()
-            return true
-        end
-        return module_require(name)
-    end
-    wrapped.init()
-    assert(wrapped.update == previous_update and wrapped.shutdown == previous_shutdown)
-    local total, wrapped_total = 0, 0
-    for name, callback in pairs(vanilla.WwiseFlowCallbacks) do
-        assert(string.dump(callback, true) == string.dump(wrapped.WwiseFlowCallbacks[name], true))
-        total = total + 1
-    end
-    for _ in pairs(wrapped.WwiseFlowCallbacks) do wrapped_total = wrapped_total + 1 end
-    assert(total > 25 and total == wrapped_total and wrapped.HellpodSteeringUnlocked.active == false)
-  end
-end
-pass('compiled archive preserves every audio callback and rejects the non-game test host')
+local env = setmetatable({print = function() end, os = {getenv = function() end},
+    update = function() end}, {__index = _G})
+env._G = env
+local previous = env.update
+setfenv(assert(loadfile(build .. '/mod.ljbc')), env)()
+assert(env.update == previous and env.HellpodSteeringUnlocked.active == false)
+pass('compiled module rejects the non-game test host')
 print(count .. ' data-only hellpod checks passed; no game process was accessed.')

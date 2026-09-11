@@ -58,6 +58,22 @@ Each repository builds independently. To include compatibility tests against the
 
 For the optional HDArsenal 0.36.0 backend check, install Node.js and set `HD2_ARSENAL_SOURCE` to an unpacked application containing `obfuscated_src/main` and its bundled `node_modules`. The check uses an isolated profile and filesystem, verifies the icon/description, import, deploy, disable, re-enable and removal. It does not change the live manager profile or game.
 
+## Shared loader verification
+
+Keep `src/shared_loader.lua`, `scripts/wwise.py` and `scripts/archive.py` identical across the two repositories. The optional peer-source build check rejects drift. The coordinator has a fixed version-1 module list; gameplay changes belong in the separate module. Changing the coordinator requires rebuilding and verifying both packages.
+
+After building both, run from either repository:
+
+```powershell
+python tests/test_shared_packages.py <Bounce-ZIP> <Hellpod-ZIP>
+```
+
+For the optional HUD+ 0.1.3 test, supply privately extracted Lua resources from that package; do not commit them. The harness runs unmodified HUD+ bytecode in an isolated Lua environment and rejects the non-game host for both memory patches:
+
+```powershell
+./tools/src/LuaJIT/src/luajit.exe tests/test_hud_compatibility.lua <Bounce-build-folder> <Hellpod-build-folder> <HUD-resources-folder>
+```
+
 ## Maintaining the mod
 
 Preserve the supported module hashes, layout checks, memory permissions and callback ordering. Updating a game fingerprint alone is insufficient: the relevant native consumers and data layout must be revalidated.

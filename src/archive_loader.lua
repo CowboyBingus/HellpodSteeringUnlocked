@@ -1,5 +1,3 @@
--- Loaded through the separate Wwise callback resource after its vanilla body.
--- Keep the previous update chain intact, including the bounce mod's initializer.
 return function(create_api, patch, build)
     if _G.HellpodSteeringUnlocked then return end
     local state = {revision = build.revision, active = false, status = ''}
