@@ -19,8 +19,8 @@ def main():
         assert not any(name.lower().endswith(('.dll', '.exe', '.lua', '.ps1')) for name in payloads)
         manifest = json.loads(payloads['manifest.json'])
         assert manifest.get('Version') == 1, 'HD2MM requires an explicit V1 manifest'
-        assert manifest['Name'] == 'Hellpod Steering Unlocked'
-        assert manifest['Options'] == [{'Name': 'Hellpod Steering Unlocked', 'Description': manifest['Description'],
+        assert manifest['Name'] == 'Hellpod Steering Unlocked - v7'
+        assert manifest['Options'] == [{'Name': 'Hellpod Steering Unlocked - v7', 'Description': manifest['Description'],
                                         'Include': ['data'], 'Image': 'thumbnail.png'}]
         assert manifest['IconPath'] == 'thumbnail.png'
         assert payloads['thumbnail.png'].startswith(b'\x89PNG\r\n\x1a\n')
