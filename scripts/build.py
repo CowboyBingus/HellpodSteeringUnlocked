@@ -13,7 +13,7 @@ from module import build_module
 ROOT = Path(__file__).resolve().parents[1]
 SOURCE = ROOT / 'src'
 TESTS = ROOT / 'tests'
-REVISION = 'data-v7'
+REVISION = 'data-v7.1'
 BUILD = ROOT / 'build'
 INSPECTOR = Path(os.environ.get('HD2_PATCH_INSPECT', ROOT / 'tools/bin/hd2-patch-inspect.exe'))
 
@@ -71,7 +71,7 @@ def main():
         'continuous_update_hook': True, 'shutdown_hook': False, 'executable_code_writes': 0,
         'offline_tests': tests.strip().splitlines(), 'windows_adapter_interop': peer_source is not None,
     }
-    report['requires'] = [{'name': 'Bingus Shared Loader', 'guid': '612eaf70-d682-43c7-9efd-16dcc695f977', 'api': 1}]
+    report['requires'] = [{'name': 'Bingus Shared Loader', 'guid': '612eaf70-d682-43c7-9efd-16dcc695f977', 'api': 1, 'revision': 'loader-v14'}]
     report['description'] += ' Requires Bingus Shared Loader.'
     sources = list(SOURCE.glob('*.lua')) + list(TESTS.glob('*.lua')) + list((ROOT / 'scripts').glob('*.py'))
     report['source_sha256'] = {path.relative_to(ROOT).as_posix(): sha(path.read_bytes()) for path in sources}
@@ -83,7 +83,7 @@ def main():
     if arsenal_source:
         print(run(['node', ROOT / 'scripts/test_arsenal_archive.cjs', release, arsenal_source, BUILD]).strip())
         report['arsenal_tests'] = json.loads((BUILD / 'arsenal-compatibility.json').read_text())
-    report['release'] = {'path': release.relative_to(ROOT).as_posix(), 'sha256': sha(release.read_bytes())}
+    report['release'] = {'path': Path(os.path.relpath(release, ROOT)).as_posix(), 'sha256': sha(release.read_bytes())}
     (BUILD / 'build-report.json').write_text(json.dumps(report, indent=2) + '\n', encoding='utf-8')
     print(tests.strip())
     print(package_tests.strip())

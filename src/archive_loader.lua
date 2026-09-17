@@ -8,9 +8,8 @@ return function(create_api, patch, build)
         state.status = status
         print('[HellpodSteeringUnlocked] ' .. build.revision .. ': ' .. status)
         pcall(function()
-            local directory = os.getenv('LOCALAPPDATA')
-            if not directory then return end
-            local file = io.open(directory .. '/HellpodSteeringUnlocked.log', 'w')
+            local logger=rawget(_G,'CowboyBingusModLoader')
+            local file=logger and logger.open_log and logger.open_log('HellpodSteeringUnlocked.log')
             if file then file:write(build.revision .. '\n' .. status .. '\n'); file:close() end
         end)
     end
