@@ -1,8 +1,8 @@
 -- Ownership and layout checks keep the write confined to the base avoidance flag.
 local ffi
 local patch = {
-    manager_rva = 0x27706A8, owner_rva = 0x277FF58,
-    owner_offset = 0x7C5220, size = 69688,
+    manager_rva = 0x346d578, owner_rva = 0x347cf18,
+    owner_offset = 0x7c8c90, size = 69688,
 }
 local function u32(bytes, offset)
     local a, b, c, d = bytes:byte(offset + 1, offset + 4)

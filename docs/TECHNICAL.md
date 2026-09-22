@@ -16,7 +16,7 @@ Only the base avoidance flag changes. Native instructions and the separate city-
 
 `src/archive_loader.lua` verifies both supported game-module hashes and installs one update wrapper. It preserves the earlier update function and all return values, including nil values. Because mission initialization resets the flag, it checks at 100 ms intervals and reapplies the one-byte edit when needed. It logs state transitions and stops its own checks on validation failure. It installs no shutdown callback.
 
-The status file is `%LOCALAPPDATA%/HellpodSteeringUnlocked.log`. `waiting_for_mission` is expected before initialized mission data; `avoidance_settings_ready` reports successful validation and the disabled flag. A status message alone does not verify gameplay behavior.
+The status file is `%LOCALAPPDATA%/CowboyBingus/Helldivers2/Logs/HellpodSteeringUnlocked.log`. `waiting_for_mission` is expected before initialized mission data; `avoidance_settings_ready` reports successful validation and the disabled flag. A status message alone does not verify gameplay behavior.
 
 ## Tests and compatibility
 
