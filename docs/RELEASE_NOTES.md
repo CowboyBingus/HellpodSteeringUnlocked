@@ -1,2 +1,3 @@
-- Update compatibility for game build 25327279.
-- Restore the hellpod steering settings for the updated game.
+- Refresh the game-build checks for Steam build 25480438.
+- Preserve the high-ground steering adjustment.
+- Offline builds and package checks pass; live gameplay validation remains pending.
