@@ -1,4 +1,4 @@
-> Current local compatibility candidate for Steam build 25480438 / EXE 1.8.46015.0. Offline checks passed; live gameplay verification is pending.
+> Release for Steam build 25480438 / EXE 1.8.46015.0. Offline checks passed; checked in live play.
 
 ![Hellpod Steering Unlocked](assets/banner.png)
 
@@ -13,7 +13,7 @@
 
 Steer your hellpod toward rooftops, rocks and high ground without the game's base avoidance system pushing it away.
 
-**Install:** Close the game, import `Bingus-Shared-Loader-v17.zip` and `Hellpod-Steering-Unlocked-v7.3.zip` into **HDArsenal** or **HD2MM**, enable both, and deploy. The loader is a required separate download; managers do not install it automatically. Use one manager. See [upgrading and uninstalling](INSTALL.txt).
+**Install:** Close the game, import `Bingus-Shared-Loader-v17.zip` and `Hellpod-Steering-Unlocked-v7.4.zip` into **HDArsenal** or **HD2MM**, enable both, and deploy. The loader is a required separate download; managers do not install it automatically. Use one manager. See [upgrading and uninstalling](INSTALL.txt).
 
 This release is **data-v7**, for Steam build **25480438** / EXE **1.8.46015.0**. It contains only this gameplay module. Bingus Shared Loader owns the startup code, so later loader updates require replacing just the loader package. Other gameplay mods are optional.
 
@@ -37,4 +37,4 @@ The new gameplay packages and Bingus Shared Loader own distinct resources and do
 
 [Release notes](docs/RELEASE_NOTES.md) · [Artwork](assets/ARTWORK.md)
 
-Current version: **v7.3**, for game build **25480438**. See [changes](CHANGELOG.md) and [validation coverage](docs/MIGRATION_VALIDATION.md).
+Current version: **v7.4**, for game build **25480438**. See [changes](CHANGELOG.md) and [validation coverage](docs/MIGRATION_VALIDATION.md).

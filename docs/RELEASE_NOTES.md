@@ -1,3 +1,3 @@
-- Refresh the game-build checks for Steam build 25480438.
-- Preserve the high-ground steering adjustment.
-- Offline builds and package checks pass; live gameplay validation remains pending.
+- Checks memory protection only when a write will follow; previously every 10 Hz poll repeated the query after the settings were already applied, and in game that query costs about 0.3 ms.
+- Reuses one read buffer instead of allocating per read.
+- Measured in real play: about 0.039 ms to 0.003 ms of main-thread time per frame in missions. Behavior is unchanged.

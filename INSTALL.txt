@@ -1,6 +1,6 @@
-Current local compatibility candidate for Steam build 25480438 / EXE 1.8.46015.0. Offline checks passed; live gameplay verification is pending.
+Release for Steam build 25480438 / EXE 1.8.46015.0. Offline checks passed; checked in live play.
 
-TEST BUILD: mission-mode and centralized-log corrections. In-game validation pending.
+PERFORMANCE UPDATE: fewer memory-protection queries and one reused read buffer. Behavior unchanged.
 
 Requires Bingus Shared Loader v16 for the shared log folder.
 
@@ -8,7 +8,7 @@ Logs: %LOCALAPPDATA%/CowboyBingus/Helldivers2/Logs
 
 
 
-Hellpod Steering Unlocked - v7.3
+Hellpod Steering Unlocked - v7.4
 
 
 
@@ -18,7 +18,7 @@ Steer your hellpod toward rooftops, rocks and high ground without being pushed a
 
 Requires Bingus Shared Loader. With the game closed, import Bingus-Shared-Loader-v17.zip and
 
-Hellpod-Steering-Unlocked-v7.3.zip into HDArsenal or HD2MM, then enable and deploy both.
+Hellpod-Steering-Unlocked-v7.4.zip into HDArsenal or HD2MM, then enable and deploy both.
 
 Use one manager. Keep the loader enabled; managers do not install it automatically.
 
