@@ -1,3 +1,6 @@
-- Checks memory protection only when a write will follow; previously every 10 Hz poll repeated the query after the settings were already applied, and in game that query costs about 0.3 ms.
-- Reuses one read buffer instead of allocating per read.
-- Measured in real play: about 0.039 ms to 0.003 ms of main-thread time per frame in missions. Behavior is unchanged.
+- An error from the game or another mod now pauses the mod with the game's own avoidance setting restored; it resumes after 60 clean frames.
+- Eight errors in one burst stop the mod for the session, and stopping restores the game's own avoidance setting.
+- When another mod has changed the avoidance setting, this mod leaves it alone and keeps checking instead of stopping.
+- Checking the setting no longer creates garbage for the Lua collector.
+- Requires Bingus Shared Loader v18 or newer.
+- Measured in live play: 0.003 ms per frame in missions and on the ship.

@@ -1,56 +1,29 @@
+Hellpod Steering Unlocked - v7.5
+
 Release for Steam build 25480438 / EXE 1.8.46015.0. Offline checks passed; checked in live play.
-
-PERFORMANCE UPDATE: fewer memory-protection queries and one reused read buffer. Behavior unchanged.
-
-Requires Bingus Shared Loader v16 for the shared log folder.
-
-Logs: %LOCALAPPDATA%/CowboyBingus/Helldivers2/Logs
-
-
-
-Hellpod Steering Unlocked - v7.4
-
-
 
 Steer your hellpod toward rooftops, rocks and high ground without being pushed away.
 
+Requires Bingus Shared Loader v18 or newer / API 1, installed separately:
+https://github.com/CowboyBingus/BingusSharedLoader/releases/latest
 
-
-Requires Bingus Shared Loader. With the game closed, import Bingus-Shared-Loader-v17.zip and
-
-Hellpod-Steering-Unlocked-v7.4.zip into HDArsenal or HD2MM, then enable and deploy both.
-
+With the game closed, import the Bingus Shared Loader ZIP and
+Hellpod-Steering-Unlocked-v7.5.zip into HDArsenal or HD2MM, then enable and deploy both.
 Use one manager. Keep the loader enabled; managers do not install it automatically.
-
 You do not need the other gameplay mods.
 
-
-
 To upgrade from an older package: remove its old library entry, purge deployment,
-
 import the current ZIP and Bingus Shared Loader, then redeploy. Replace all enabled
-
 older CowboyBingus packages that bundled the loader. Remove previous manual files
-
 before switching to a manager. Do not enable withdrawn native reinforcement prototypes.
 
-
-
 To uninstall, disable this mod, purge deployment, and redeploy the remaining mods.
-
 Remove Bingus Shared Loader only if no dependent mods remain enabled.
 
-
-
-Developed with assistance from GPT-6 Astra.
-
-
-
-Loader-v2 / API 1 is required. Bingus Shared Loader is the renamed Shared Mod
-
-Loader; its manager GUID is unchanged. Replace the old entry instead of enabling
-
-both names. Current Reinforcement Beacons Fixed is an optional separate module.
+Bingus Shared Loader is the renamed Shared Mod Loader; its manager GUID is unchanged.
+Replace the old entry instead of enabling both names. Current Reinforcement Beacons
+Fixed is an optional separate module.
 
 Logs: %LOCALAPPDATA%\CowboyBingus\Helldivers2\Logs
-Requires Bingus Shared Loader v17 or newer for this log folder.
+
+Developed with assistance from GPT-6 Astra and Claude Opus 5.5.

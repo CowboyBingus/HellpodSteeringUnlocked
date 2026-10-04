@@ -1,3 +1,13 @@
+# v7.5
+
+- Pauses after an error in the game's update or another mod's: it puts the game's own avoidance setting back and checks again once those updates have run cleanly for 60 frames.
+- Stops after 8 errors in a burst, its own or in the updates below it; before, it stopped at its own first error and ignored errors below it.
+- A memory layout it cannot verify still stops it at once.
+- When it stops, it puts the game's own avoidance setting back if its own change is still in place; quitting the game writes nothing.
+- Leaves the avoidance setting alone when another mod has set it to a value other than the game's own, reports this once and keeps checking; before, it stopped.
+- Checks the avoidance setting without creating any garbage for the Lua collector.
+- Licensed under the Zero-Clause BSD license (0BSD).
+
 # v7.4
 
 - Checks memory protection only when a write will follow; previously every 10 Hz poll repeated the query after the settings were already applied, and in game that query costs about 0.3 ms.
