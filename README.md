@@ -13,9 +13,9 @@
 
 Steer your hellpod toward rooftops, rocks and high ground without the game's base avoidance system pushing it away.
 
-**Install:** Close the game, import Bingus Shared Loader v18 or newer and `Hellpod-Steering-Unlocked-v7.5.zip` into **HDArsenal** or **HD2MM**, enable both, and deploy. The loader is a required separate download; managers do not install it automatically. Use one manager. See [upgrading and uninstalling](INSTALL.txt).
+**Install:** Close the game, import Bingus Shared Loader v18 or newer and `Hellpod-Steering-Unlocked-v7.5.1.zip` into **HDArsenal** or **HD2MM**, enable both, and deploy. The loader is a required separate download; managers do not install it automatically. Use one manager. See [upgrading and uninstalling](INSTALL.txt).
 
-This release is **v7.5**, for Steam build **25480438** / EXE **1.8.46015.0**. It contains only this gameplay module. Bingus Shared Loader owns the startup code, so later loader updates require replacing just the loader package. Other gameplay mods are optional.
+This release is **v7.5.1**, for Steam build **25480438** / EXE **1.8.46015.0**. It contains only this gameplay module. Bingus Shared Loader owns the startup code, so later loader updates require replacing just the loader package. Other gameplay mods are optional.
 
 Remove older packages with bundled loaders before deploying this candidate. This package requires Bingus Shared Loader v18 or newer / API 1. The loader was formerly named Shared Mod Loader; its manager GUID and API are unchanged. In-game validation of the packaging transition remains pending.
 
@@ -37,7 +37,7 @@ The new gameplay packages and Bingus Shared Loader own distinct resources and do
 
 [Release notes](docs/RELEASE_NOTES.md) · [Artwork](assets/ARTWORK.md)
 
-Current version: **v7.5**, for game build **25480438**. See [changes](CHANGELOG.md) and [validation coverage](docs/MIGRATION_VALIDATION.md).
+Current version: **v7.5.1**, for game build **25480438**. See [changes](CHANGELOG.md) and [validation coverage](docs/MIGRATION_VALIDATION.md).
 
 ## License
 

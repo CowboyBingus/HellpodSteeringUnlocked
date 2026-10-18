@@ -1,3 +1,7 @@
+# v7.5.1
+
+- The 100 ms check for a mission reset reads only the avoidance flag, with a full check every second, and the game's Lua compiler no longer keeps retrying to compile the mod's update. Measured in game: 0.005-0.006 ms per frame before and 0.003 now, on the ship and in missions.
+
 # v7.5
 
 - Pauses after an error in the game's update or another mod's: it puts the game's own avoidance setting back and checks again once those updates have run cleanly for 60 frames.

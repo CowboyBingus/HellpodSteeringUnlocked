@@ -1,4 +1,4 @@
-Hellpod Steering Unlocked - v7.5
+Hellpod Steering Unlocked - v7.5.1
 
 Release for Steam build 25480438 / EXE 1.8.46015.0. Offline checks passed; checked in live play.
 
@@ -8,7 +8,7 @@ Requires Bingus Shared Loader v18 or newer / API 1, installed separately:
 https://github.com/CowboyBingus/BingusSharedLoader/releases/latest
 
 With the game closed, import the Bingus Shared Loader ZIP and
-Hellpod-Steering-Unlocked-v7.5.zip into HDArsenal or HD2MM, then enable and deploy both.
+Hellpod-Steering-Unlocked-v7.5.1.zip into HDArsenal or HD2MM, then enable and deploy both.
 Use one manager. Keep the loader enabled; managers do not install it automatically.
 You do not need the other gameplay mods.
 

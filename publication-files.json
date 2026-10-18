@@ -35,6 +35,9 @@
   "src/windows_api.lua",
   "tests/frame_budget.lua",
   "tests/test_api_coexistence.lua",
+  "tests/reference/archive_loader.lua",
+  "tests/reference/steering_patch.lua",
   "tests/test_data.lua",
+  "tests/test_idle_gate.lua",
   "tests/test_package.py"
 ]
